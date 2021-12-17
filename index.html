@@ -7,7 +7,6 @@
     <style>
         body {
             background-color:rgb(43,43,43);
-            color:white;
             font-family: Arial, Helvetica, sans-serif;
         }
 
@@ -15,18 +14,18 @@
             text-align: center;
         }
 
-        .game--title {
+        .tttTitle {
             font-size: 60px;
-            color: #ffffff;
+            color: #5fc2fc;
             margin: 10px auto;
         }
 
-        .game--container {
+        .tttContainer {
             display: grid;
             grid-template-columns: repeat(3, auto);
-            width: 306px;
-            margin: 10px auto;
-            background-color: #ffffff;
+            width: 310px;
+            margin: 25px auto;
+            background-color: #424242;
             color: #000000;
         }
 
@@ -40,18 +39,18 @@
             font-size: 60px;
         }
 
-        .game--status {
+        .tttStatus {
             font-size: 45px;
-            color: #ffffff;
+            color: #f5b745;
             margin: 20px auto;
         }
 
-        .game--restart {
+        .tttRestart {
             background-color: rgb(83, 83, 83);
             width: 200px;
             height: 50px;
             font-size: 25px;
-            color: #ffffff;
+            color: #000000;
             border: 1px solid #000000;
         }
     </style>
@@ -59,8 +58,8 @@
 </head>
     <body>
         <section>
-            <h1 class="game--title">Tic-Tac-Toe Web</h1>
-            <div class="game--container">
+            <h1 class="tttTitle">Tic-Tac-Toe Web</h1>
+            <div class="tttContainer">
                 <div data-cell-index="0" class="cell"></div>
                 <div data-cell-index="1" class="cell"></div>
                 <div data-cell-index="2" class="cell"></div>
@@ -71,22 +70,22 @@
                 <div data-cell-index="7" class="cell"></div>
                 <div data-cell-index="8" class="cell"></div>
             </div>
-            <h2 class="game--status"></h2>
-            <button class="game--restart">Restart Game</button>
+            <h2 class="tttStatus"></h2>
+            <button class="tttRestart">Restart Game</button>
         </section>
 
         <script>
-            const statusDisplay = document.querySelector('.game--status');
+            const displayState = document.querySelector('.tttStatus');
 
-            let gameActive = true;
-            let currentPlayer = "X";
-            let gameState = ["", "", "", "", "", "", "", "", ""];
+            let tttActive = true;
+            let activePlayer = "X";
+            let tttState = ["", "", "", "", "", "", "", "", ""];
 
-            const winningMessage = () => `Player ${currentPlayer} won!`;
+            const winMessage = () => `Player ${activePlayer} won!`;
             const drawMessage = () => `It's a draw!`;
-            const currentPlayerTurn = () => `It's ${currentPlayer}'s play`;
+            const activePlayerTurn = () => `It's ${activePlayer}'s play`;
 
-            statusDisplay.innerHTML = currentPlayerTurn();
+            displayState.innerHTML = activePlayerTurn();
 
             const winningConditions = [
                 [0, 1, 2],
@@ -99,23 +98,23 @@
                 [2, 4, 6]
             ];
 
-            function handleCellPlayed(clickedCell, clickedCellIndex) {
-                gameState[clickedCellIndex] = currentPlayer;
-                clickedCell.innerHTML = currentPlayer;
+            function selectedCell(clickedCell, clickedCellIndex) {
+                tttState[clickedCellIndex] = activePlayer;
+                clickedCell.innerHTML = activePlayer;
             }
 
-            function handlePlayerChange() {
-                currentPlayer = currentPlayer === "X" ? "O" : "X";
-                statusDisplay.innerHTML = currentPlayerTurn();
+            function switchPlayer() {
+                activePlayer = activePlayer === "X" ? "O" : "X";
+                displayState.innerHTML = activePlayerTurn();
             }
 
-            function handleResultValidation() {
+            function validateResults() {
                 let roundWon = false;
                 for (let i = 0; i <= 7; i++) {
                     const winCondition = winningConditions[i];
-                    let a = gameState[winCondition[0]];
-                    let b = gameState[winCondition[1]];
-                    let c = gameState[winCondition[2]];
+                    let a = tttState[winCondition[0]];
+                    let b = tttState[winCondition[1]];
+                    let c = tttState[winCondition[2]];
                     if (a === '' || b === '' || c === '') {
                         continue;
                     }
@@ -126,43 +125,43 @@
                 }
 
                 if (roundWon) {
-                    statusDisplay.innerHTML = winningMessage();
-                    gameActive = false;
+                    displayState.innerHTML = winMessage();
+                    tttActive = false;
                     return;
                 }
 
-                let roundDraw = !gameState.includes("");
+                let roundDraw = !tttState.includes("");
                 if (roundDraw) {
-                    statusDisplay.innerHTML = drawMessage();
-                    gameActive = false;
+                    displayState.innerHTML = drawMessage();
+                    tttActive = false;
                     return;
                 }
 
-                handlePlayerChange();
+                switchPlayer();
             }
 
-            function handleCellClick(clickedCellEvent) {
+            function manageClick(clickedCellEvent) {
                 const clickedCell = clickedCellEvent.target;
                 const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
 
-                if (gameState[clickedCellIndex] !== "" || !gameActive) {
+                if (tttState[clickedCellIndex] !== "" || !tttActive) {
                     return;
                 }
 
-                handleCellPlayed(clickedCell, clickedCellIndex);
-                handleResultValidation();
+                selectedCell(clickedCell, clickedCellIndex);
+                validateResults();
             }
 
-            function handleRestartGame() {
-                gameActive = true;
-                currentPlayer = "X";
-                gameState = ["", "", "", "", "", "", "", "", ""];
-                statusDisplay.innerHTML = currentPlayerTurn();
+            function restartTTT() {
+                tttActive = true;
+                activePlayer = "X";
+                tttState = ["", "", "", "", "", "", "", "", ""];
+                displayState.innerHTML = activePlayerTurn();
                 document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = "");
             }
 
-            document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
-            document.querySelector('.game--restart').addEventListener('click', handleRestartGame);
+            document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', manageClick));
+            document.querySelector('.tttRestart').addEventListener('click', restartTTT);
         </script>
     </body>
 </html>
